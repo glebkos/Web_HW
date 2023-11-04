@@ -10,4 +10,14 @@ def index(request):
             'title': f'Question {i}'
         } for i in range(3)
     ]
-    return render(request, 'ask.html', {'questions': questions})
+    answers = [
+        {
+            'id': i,
+            'title': f'Question {i}'
+        } for i in range(2)
+    ]
+    return render(request, 'index.html', {'questions': questions})
+    # return render(request, 'ask.html')
+    # return render(request, 'question.html', {'answers': answers})
+    # return render(request, 'login.html')
+    # return render(request, 'register.html')

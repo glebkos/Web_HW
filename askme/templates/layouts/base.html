@@ -9,7 +9,7 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'main.css' %}">
   </head>
-  <body>
+  <body class="d-flex flex-column">
     <!--  Navbar  -->
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container-fluid">
@@ -46,7 +46,7 @@
                     </li>
                     <li class="nav-item">
                         <div class="dropdown">
-                            <a href="#profile" class="nav-link btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a href="#profile" class="nav-link btn btn-dark dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="..." class="rounded mt-auto img-thumbnail">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -66,15 +66,15 @@
         </div>
     </nav>
 <!--    Showcase    -->
-    <div class="container-fluid row p-0 m-0 h-100">
+    <div class="flex-grow-1 container-fluid row p-0 m-0 right-section">
         <section class="bg-body text-dark text-left px-5 pt-2 col-8">
             {% block content %}
 
             {% endblock %}
         </section>
-        <section class="bg-light text-dark text-center px-2 col-4">
+        <section class="bg-light text-dark text-center col h-100">
             <h2 class="my-3">Popular Tags</h2>
-            <div class="container text-start mx-4">
+            <div class="container text-start">
                 <div class="row">
                     <div class="col-3">
                         <a href="#" class="link-warning"><h5>Tag1</h5></a>
@@ -108,11 +108,28 @@
             </ul>
         </section>
     </div>
-    <footer class="footer bg-dark">
+    <footer class="py-3 mt-3 bg-dark footer">
         <div class="container">
             <a href="#" class="link-light">MySite</a>
         </div>
     </footer>
+    <script>
+        (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+    </script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   </body>
 </html>

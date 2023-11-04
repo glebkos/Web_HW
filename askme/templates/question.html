@@ -1,0 +1,106 @@
+{% extends 'layouts/base.html'%}
+
+{% block content %}
+    <section class="mt-2 border-bottom">
+        <div class="row">
+            <div class="col-3 my-2">
+                <div class="row mb-1">
+                    <div class="col">
+                        <a href="" class="d-flex justify-content-center"><img src="../static/img/test.png" class="w-50"></a>
+                    </div>
+                </div>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-2 p-0 d-flex justify-content-end">
+                        <a href="" class="link-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up " viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="col-2 text-center p-0">
+                        <p>0</p>
+                    </div>
+                    <div class="col-2 p-0 d-flex justify-content-start">
+                        <a href="" class="link-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9 mb-2">
+                <p class=" fs-3 mb-1 pt-0">Question?</p>
+                <p class=" fs-6 my-2"> AWESOME Question text AWESOME Question text AWESOME Question text AWESOME
+                    Question text AWESOME Question text AWESOME Question text AWESOME Question text  </p>
+                <p class="fs-6 my-1"><span class="text-decoration-underline">Tags:</span> <a href="#" class="link">Sometag</a></p>
+            </div>
+        </div>
+    </section>
+    <section class="my-3 border-bottom ps-4">
+        {%for answer in answers%}
+            <div class="row my-2">
+                <div class="col-2 my-2">
+                    <div class="row mb-1">
+                        <div class="col d-flex justify-content-center">
+                            <a href="" class="d-flex justify-content-center"><img src="../static/img/test.png" class="w-50"></a>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-2 p-0 d-flex justify-content-end">
+                            <a href="" class="link-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up " viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="col-2 text-center p-0">
+                            <p>0</p>
+                        </div>
+                        <div class="col-2 p-0 d-flex justify-content-start">
+                            <a href="" class="link-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9 mb-2">
+                    <p class=" fs-6 my-2"> BREATHTAKING answer BREATHTAKING answer BREATHTAKING answer BREATHTAKING answer
+                        BREATHTAKING answer BREATHTAKING answer BREATHTAKING answer BREATHTAKING answer </p>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check1">
+                        <label for="check1" class="form-check-label">Correct</label>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="ms-4 mt-3">
+            <nav aria-label="" >
+              <ul class="pagination pagination-sm">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul>
+            </nav>
+        </div>
+    </section>
+    <section>
+        <form action="" class="needs-validation" novalidate>
+            <div class="row">
+                <div class="col">
+                    <textarea class="form-control" style="height: 200px" id="answerType" placeholder="Enter your answer" required></textarea>
+                    <div class="invalid-feedback">Wrong Text</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-end mt-2">
+                    <button class="btn btn-success" type="submit">Answer</button>
+                </div>
+            </div>
+        </form>
+    </section>
+{% endblock %}
