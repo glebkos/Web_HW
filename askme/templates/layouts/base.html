@@ -13,7 +13,7 @@
     <!--  Navbar  -->
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">MySite</a>
+            <a class="navbar-brand" href="{% url 'index' %}">MySite</a>
             <form role="search" class="d-flex">
                 <input type="search" class="form-control me-2" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
@@ -23,12 +23,12 @@
             </a>
             <div class="collapse navbar-collapse" id="navmenu">
                 <ul class="navbar-nav ms-auto ">
-<!--                    <li class="nav-item">-->
-<!--                        <button class="btn btn-primary me-2">Log in</button>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <button class="btn btn-light">Sign in</button>-->
-<!--                    </li>-->
+                    <li class="nav-item nav-link">
+                        <a class="btn btn-primary me-2" role="button" href="{% url 'signup' %}">Log in</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="btn btn-light" role="button" href="{% url 'register' %}">Sign in</a>
+                    </li>
                     <li class="nav-item">
                         <a href="#learn" class="nav-link">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
@@ -67,7 +67,7 @@
     </nav>
 <!--    Showcase    -->
     <div class="flex-grow-1 container-fluid row p-0 m-0 right-section">
-        <section class="bg-body text-dark text-left px-5 pt-2 col-8">
+        <section class="bg-body text-dark text-left px-5 py-3 col-8">
             {% block content %}
 
             {% endblock %}
@@ -77,28 +77,33 @@
             <div class="container text-start">
                 <div class="row">
                     <div class="col-3">
-                        <a href="#" class="link-warning"><h5>Tag1</h5></a>
+                        <a href="{% url 'tag_search' 'blabla' %}" class="link-warning"><h5>blabla</h5></a>
                     </div>
                     <div class="col-4">
-                        <a href="#" class="link-danger"><h4>Tag2</h4></a>
+                        <a href="{% url 'tag_search' 'tag2' %}" class="link-danger"><h4>Tag2</h4></a>
                     </div>
                     <div class="col-3">
-                        <a href="#" class="link-primary"><h5>Tag2</h5></a>
+                        <a href="{% url 'tag_search' 'tag3' %}" class="link-primary"><h5>Tag3</h5></a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        <a href="#" class="link-info"><h4>Tag4</h4></a>
+                        <a href="{% url 'tag_search' 'tag4' %}" class="link-info"><h4>Tag4</h4></a>
                     </div>
                     <div class="col-3">
-                        <a href="#" class="link-dark"><h5>Tag5</h5></a>
+                        <a href="{% url 'tag_search' 'tag5' %}" class="link-dark"><h5>Tag5</h5></a>
                     </div>
                     <div class="col-2">
-                        <a href="#" class="link-success"><h6>Tag6</h6></a>
+                        <a href="{% url 'tag_search' 'tag6' %}" class="link-success"><h6>Tag6</h6></a>
+                    </div>
+                </div>
+                <div class="row my-4">
+                    <div class="col">
+                        <a href="{% url 'best_questions' %}" class="link fs-5">🔥Hot questions🔥</a>
                     </div>
                 </div>
             </div>
-            <h2 class="mt-5 mb-3">Best memebers</h2>
+            <h2 class="my-2">Best memebers</h2>
             <ul class="list-group list-group-flush text-start mx-3">
                 <li class="list-group-item bg-light"><a href="#" class="link-primary">User1</a></li>
                 <li class="list-group-item bg-light"><a href="#" class="link-primary">User2</a></li>
@@ -108,9 +113,9 @@
             </ul>
         </section>
     </div>
-    <footer class="py-3 mt-3 bg-dark footer">
+    <footer class="py-3 bg-dark footer">
         <div class="container">
-            <a href="#" class="link-light">MySite</a>
+            <a href="{% url 'index' %}" class="link-light">MySite</a>
         </div>
     </footer>
     <script>

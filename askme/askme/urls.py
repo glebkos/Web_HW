@@ -19,6 +19,12 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
+    path('hot/', views.best_questions, name='best_questions'),
+    path('question/<int:question_id>/', views.question, name='question'),
+    path('ask/', views.add_question, name='ask'),
+    path('tag/<question_tag>/', views.question_by_tag, name='tag_search'),
+    path('signup/', views.login, name='signup'),
+    path('register/', views.register, name='register'),
     path('admin/', admin.site.urls)
 ]
