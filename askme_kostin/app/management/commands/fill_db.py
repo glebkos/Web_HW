@@ -15,6 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ratio = options['ratio']
+
         users = [
             User(
                 username=fake.bothify(text='????????????'),
@@ -24,6 +25,7 @@ class Command(BaseCommand):
         User.objects.bulk_create(users)
         users = User.objects.all()
         print("user add")
+
         profiles = [
             Profile(
                 rating=fake.pyint(),
@@ -33,7 +35,7 @@ class Command(BaseCommand):
         Profile.objects.bulk_create(profiles)
         profiles = Profile.objects.all()
         profiles_count = profiles.count()
-        print("profile add")
+
         tags = [
             Tag(
                 tag_name=fake.word()
@@ -42,7 +44,7 @@ class Command(BaseCommand):
         Tag.objects.bulk_create(tags)
         tags = Tag.objects.all()
         tags_count = tags.count()
-        print("tags add")
+
         questions = [
             Question(
                 title=fake.word(),
@@ -60,8 +62,7 @@ class Command(BaseCommand):
             for _ in range(0, 1):
                 questions[i].tags.add(tags[fake.random_int(min=0, max=tags_count - 1)])
         Question.objects.update()
-        # questions = Question.objects.all()
-        print("question 100% add")
+
         answers = [
             Answer(
                 content=fake.word(),
@@ -75,22 +76,21 @@ class Command(BaseCommand):
         Answer.objects.bulk_create(answers)
         answers = Answer.objects.all()
         answers_count = answers.count()
-        print("answers add")
+
         question_likes = [
             questionLike(
                 question=questions[fake.random_int(min=0, max=questions_count - 1)],
                 owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
                 value=fake.pybool()
-            ) for _ in range(ratio * 100)
+            ) for _ in range(0, ratio)
         ]
-        questionLike.objects.bulk_create(question_likes)
-        print("question_likes add")
+        questionLike.objects.bulk_create(question_likes * 100)
+
         answers_likes = [
             answerLike(
                 answer=answers[fake.random_int(min=0, max=answers_count - 1)],
                 owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
                 value=fake.pybool()
-            ) for _ in range(ratio * 100)
+            ) for _ in range(ratio)
         ]
-        answerLike.objects.bulk_create(answers_likes)
-        print("answers_likes add")
+        answerLike.objects.bulk_create(answers_likes * 100)

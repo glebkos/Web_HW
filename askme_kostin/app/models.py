@@ -1,7 +1,8 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.views.defaults import page_not_found
 from django.db import models
 from django.contrib.auth.models import User
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 
 
 class TagManager(models.Manager):
@@ -19,7 +20,7 @@ class QuestionManager(models.Manager):
         try:
             return self.get(id=id)
         except ObjectDoesNotExist:
-            return page_not_found()
+            raise Http404("Poll does not exist")
 
     def hotQuestions(self):
         return self.order_by("-rating")
