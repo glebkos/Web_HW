@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import auth
+from django.views.decorators.csrf import csrf_protect
+from django.urls import reverse
+from .forms import LoginForm, RegisterForm
 from .models import Question, Answer
 from .services import paginate
 
@@ -30,8 +34,42 @@ def best_questions(request):
 
 
 def register(request):
-    return render(request, 'register.html')
+    if request.method == "GET":
+        login_form = RegisterForm()
+    if request.method == "POST":
+        login_form = RegisterForm(request.POST)
+        if login_form.is_valid():
+            user = auth.authenticate(request, **login_form.cleaned_data)
+            if user is not None:
+                auth.login(request, user)
+                return redirect(request.GET.get('continue', '/'))
+            else:
+                login_form.add_error(None, "Sorry wrong login or password")
+                # login_form.errors['password'] = 'Wrong password'
+    return render(request, 'register.html', context={'form': login_form, 'title': 'Register'})
 
 
+@csrf_protect
 def login(request):
-    return render(request, 'login.html')
+    if request.method == "GET":
+        login_form = LoginForm()
+    if request.method == "POST":
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user = auth.authenticate(request, **login_form.cleaned_data)
+            if user is not None:
+                auth.login(request, user)
+                return redirect(request.GET.get('continue', '/'))
+            else:
+                login_form.add_error(None, "Sorry wrong login or password")
+                # login_form.errors['password'] = 'Wrong password'
+    return render(request, 'login.html', context={'form': login_form})
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect(request.GET.get('continue', '/'))
+
+
+def settings(request):
+    return render(request, 'settings.html', {'title': 'Settings'})

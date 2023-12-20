@@ -85,7 +85,7 @@ class questionLike(models.Model):
 
 class answerLike(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE) # Добавить uniq...
     value = models.BooleanField()
 
 

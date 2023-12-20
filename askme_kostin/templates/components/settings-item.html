@@ -1,0 +1,67 @@
+{% load static %}
+
+<h1 class="mb-3">{{ title }}</h1>
+<form class="needs-validation" novalidate>
+    <div class="row my-2">
+      <span class="text-danger">You enter wrong data</span>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="login">Login</label>
+        </div>
+        <div class="col-5">
+            <input type="text" class="form-control" id="login" required>
+            <div class="invalid-feedback">Wrong login</div>
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="email">Email</label>
+        </div>
+        <div class="col-5">
+            <input type="email" class="form-control" id="email" required>
+            <div class="invalid-feedback">Wrong email</div>
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="nickname">Nickname</label>
+        </div>
+        <div class="col-5">
+            <input type="text" class="form-control" id="nickname" required>
+            <div class="invalid-feedback">Wrong nickname</div>
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="password">Password</label>
+        </div>
+        <div class="col-5">
+            <input type="password" class="form-control" id="password" required>
+            <div class="invalid-feedback">Wrong password</div>
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="rep_password">Repeat password</label>
+        </div>
+        <div class="col-5">
+            <input type="password" class="form-control" id="rep_password" required>
+            <div class="invalid-feedback">Wrong password</div>
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2 pt-1 d-flex justify-content-start">
+            <label class="fs-6" for="rep_password">Upload avatar</label>
+        </div>
+        <div class="col-5">
+            <input type="file" class="custom-file-input" id="avatar">
+        </div>
+    </div>
+    <div class="form-row my-3 input-group">
+        <div class="col-2"></div>
+        <div class="col-5 d-flex bd-highlight">
+            <button class="me-auto btn btn-success bd-highlight" type="submit">Register</button>
+        </div>
+    </div>
+</form>

@@ -57,7 +57,7 @@ class Command(BaseCommand):
         Question.objects.bulk_create(questions)
         questions = Question.objects.all()
         questions_count = questions.count()
-        print("question 50% add")
+
         for i in range(ratio * 10):
             for _ in range(0, 1):
                 questions[i].tags.add(tags[fake.random_int(min=0, max=tags_count - 1)])
