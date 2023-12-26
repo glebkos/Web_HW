@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.utils import timezone
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 
@@ -33,13 +35,13 @@ class AnswersManager(models.Manager):
 
 class Profile(models.Model):
     avatar = models.ImageField(blank=True, null=True)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField('self', through='profileLike', through_fields=('profile', 'owner'))
 
 
 class Tag(models.Model):
-    tag_name = models.CharField(max_length=256)
+    tag_name = models.CharField(max_length=256, unique=True)
 
     objects = TagManager()
 
@@ -49,11 +51,11 @@ class Tag(models.Model):
 
 class Question(models.Model):
     title = models.CharField(max_length=256)
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=2048)
     author = models.ForeignKey(Profile, max_length=256, on_delete=models.SET_NULL, null=True, related_name='questionAuthor')
-    creation_date = models.DateField(null=False)
+    creation_date = models.DateTimeField(null=False, default=timezone.now)
     tags = models.ManyToManyField(Tag)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default=0)
     likes = models.ManyToManyField(Profile, through='questionLike', through_fields=('question', 'owner'))
 
     objects = QuestionManager()
@@ -63,12 +65,12 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=2048)
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name='answerAuthor')
-    creation_date = models.DateField()
+    creation_date = models.DateTimeField(null=False, default=timezone.now)
     correct = models.BooleanField(default=False)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, unique=False)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default=0)
     likes = models.ManyToManyField(Profile, through='answerLike', through_fields=('answer', 'owner'))
 
     objects = AnswersManager()
@@ -85,7 +87,7 @@ class questionLike(models.Model):
 
 class answerLike(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE) # Добавить uniq...
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     value = models.BooleanField()
 
 

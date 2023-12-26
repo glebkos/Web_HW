@@ -2,10 +2,10 @@
 
 {% block content %}
     <h1 class="mb-3">{{ title }}</h1>
-{%for question in questions%}
+    {%for question in page%}
 
-  {% include 'components/question-item.html' %}
+      {% include 'components/question-item.html' %}
 
-{% endfor %}
-    {% include 'components/pagination-item.html' %}
+    {% endfor %}
+    {% include 'components/pagination-item.html'%}
 {% endblock %}

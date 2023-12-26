@@ -24,7 +24,6 @@ class Command(BaseCommand):
         ]
         User.objects.bulk_create(users)
         users = User.objects.all()
-        print("user add")
 
         profiles = [
             Profile(
@@ -38,7 +37,7 @@ class Command(BaseCommand):
 
         tags = [
             Tag(
-                tag_name=fake.word()
+                tag_name=fake.bothify(text='??????'),
             ) for _ in range(ratio)
         ]
         Tag.objects.bulk_create(tags)
@@ -47,10 +46,9 @@ class Command(BaseCommand):
 
         questions = [
             Question(
-                title=fake.word(),
-                content=fake.word(),
+                title=fake.sentence(nb_words=5),
+                content=fake.sentence(nb_words=30),
                 author=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                creation_date=str(fake.date_between(start_date='-10y')),
                 rating=fake.random_int(min=0, max=10000),
             ) for _ in range(ratio * 10)
         ]
@@ -65,9 +63,8 @@ class Command(BaseCommand):
 
         answers = [
             Answer(
-                content=fake.word(),
+                content=fake.sentence(nb_words=20),
                 author=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                creation_date=str(fake.date_between(start_date='-10y')),
                 correct=fake.pybool(),
                 question=questions[fake.random_int(min=0, max=questions_count - 1)],
                 rating=fake.random_int(min=0, max=10000),

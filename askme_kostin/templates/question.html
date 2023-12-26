@@ -1,11 +1,13 @@
 {% extends 'layouts/base.html'%}
+{% load django_bootstrap5 %}
+
 
 {% block content %}
     <section class="mt-2 border-bottom">
         {% include 'components/question-item.html' %}
     </section>
     <section class="my-3 border-bottom ps-4">
-        {%for answer in answers%}
+        {% for answer in page %}
             {% include 'components/answer-item.html'%}
         {% endfor %}
         <div class="ms-4 mt-3">
@@ -13,18 +15,25 @@
         </div>
     </section>
     <section>
-        <form action="" class="needs-validation" novalidate>
-            <div class="row">
-                <div class="col">
-                    <textarea class="form-control" style="height: 200px" id="answerType" placeholder="Enter your answer" required></textarea>
-                    <div class="invalid-feedback">Wrong Text</div>
+        <form action="" class="needs-validation" method="post" novalidate>
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+                {% bootstrap_form form %}
+                <div class="form-row my-2 input-group">
+                    <div class="col d-flex justify-content-end">
+                        <button class="btn btn-success" type="submit">Answer</button>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col d-flex justify-content-end mt-2">
-                    <button class="btn btn-success" type="submit">Answer</button>
-                </div>
-            </div>
+            {% else %}
+                <fieldset disabled>
+                    {% bootstrap_form form %}
+                    <div class="form-row my-2 input-group">
+                        <div class="col d-flex justify-content-end">
+                            <button class="btn btn-success" type="submit">Answer</button>
+                        </div>
+                    </div>
+                </fieldset>
+            {% endif %}
         </form>
     </section>
 {% endblock %}
