@@ -46,7 +46,7 @@ class Command(BaseCommand):
 
         questions = [
             Question(
-                title=fake.sentence(nb_words=5),
+                title=fake.sentence(nb_words=10),
                 content=fake.sentence(nb_words=30),
                 author=profiles[fake.random_int(min=0, max=profiles_count - 1)],
                 rating=fake.random_int(min=0, max=10000),

@@ -28,13 +28,25 @@ class QuestionManager(models.Manager):
         return self.order_by("-rating")
 
 
+class QuestionLikeManager(models.Manager):
+    def toggle_like(self, user, question):
+        if not self.filter(owner=user, question=question).exists():
+            self.create(owner=user, question=question, value=1)
+            question.rating += 1
+            question.save()
+        else:
+            self.filter(owner=user, question=question).delete()
+            question.rating -= 1
+            question.save()
+
+
 class AnswersManager(models.Manager):
     def takeAnswers(self, question_id):
         return self.filter(question__id=question_id)
 
 
 class Profile(models.Model):
-    avatar = models.ImageField(blank=True, null=True)
+    avatar = models.ImageField(blank=True, null=True, default='default.png', upload_to='avatar/%Y/%m/%d')
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField('self', through='profileLike', through_fields=('profile', 'owner'))
@@ -63,6 +75,9 @@ class Question(models.Model):
     def __str__(self):
         return self.title
 
+    def get_likes(self):
+        return self.rating
+
 
 class Answer(models.Model):
     content = models.CharField(max_length=2048)
@@ -83,6 +98,8 @@ class questionLike(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     value = models.BooleanField()
+
+    objects = QuestionLikeManager()
 
 
 class answerLike(models.Model):

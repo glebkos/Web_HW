@@ -2,7 +2,7 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<form class="needs-validation col-6" method="post" novalidate>
+<form class="needs-validation col-6" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     <div class="row my-2">
         <h2>Settings</h2>
@@ -10,6 +10,11 @@
     <div class="">
         {% bootstrap_form form %}
     </div>
+    {% if request.user.profile.avatar %}
+        <div class="w-50">
+            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar" class="w-100">
+        </div>
+    {% endif %}
         <div class="d-flex bd-highlight">
             <div class="me-auto">
                 <button class="me-auto btn btn-success bd-highlight" type="submit">Change</button>

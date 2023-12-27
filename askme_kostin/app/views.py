@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import auth
 from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.models import User
 from .forms import LoginForm, RegisterForm, SettingsForm, QuestionForm, AnswerForm
-from .models import Question, Answer
+from .models import Question, Answer, questionLike
 from .services import paginate
+from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 
 def index(request):
+    # print(request.user.profile)
     questions = Question.objects.lastQuestions()
     return render(request, 'index.html', {'title': 'New questions', 'page': paginate(request, questions)})
 
@@ -48,12 +50,12 @@ def add_question(request):
 def question_by_tag(request, question_tag):
     questions = Question.objects.tagSort(question_tag)
     return render(request, 'index.html', {'title': f'Search by {question_tag}',
-                                          'questions': paginate(request, questions)})
+                                          'page': paginate(request, questions)})
 
 
 def best_questions(request):
     best = Question.objects.hotQuestions()
-    return render(request, 'index.html', {'title': f'Best searches', 'questions': paginate(request, best)})
+    return render(request, 'index.html', {'title': f'Best searches', 'page': paginate(request, best)})
 
 
 @csrf_protect
@@ -63,12 +65,18 @@ def register(request):
     if request.method == "POST":
         user_form = RegisterForm(request.POST)
         if user_form.is_valid():
-            user = user_form.save()
-            if user is not None:
-                auth.login(request, user)
-                return redirect(request.GET.get('continue', '/'))
-            else:
-                user_form.add_error(None, "Sorry wrong login or password")
+            try:
+                user = user_form.save()
+                if user is not None:
+                    auth.login(request, user)
+                    return redirect(request.GET.get('continue', '/'))
+                else:
+                    user_form.add_error(None, "Invalid data in fields")
+            except:
+                user_form.add_error(None, "This login is already used")
+                user_form.add_error('username', "Wrong username")
+        else:
+            user_form.add_error(None, "Please, enter data in all fields ")
     return render(request, 'register.html', context={'form': user_form})
 
 
@@ -85,7 +93,9 @@ def login(request):
                 return redirect(request.GET.get('continue', '/'))
             else:
                 login_form.add_error(None, "Sorry wrong login or password")
-                # login_form.errors['password'] = 'Wrong password']
+                login_form.add_error('password', "")
+                login_form.add_error('username', "")
+                print(login_form.errors)
     return render(request, 'login.html', context={'form': login_form})
 
 
@@ -100,21 +110,25 @@ def logout(request):
 @csrf_protect
 def settings(request):
     if request.method == "GET":
-        user = request.user
-        initial_vals = {
-            'username': user.get_username(),
-            'email': user.email,
-            'password': '',
-            'password_check': '',
-        }
-        settings_form = SettingsForm(None, initial=initial_vals)
+        settings_form = SettingsForm(None, initial=model_to_dict(request.user))
     if request.method == "POST":
-        inst = User.objects.get(pk=request.user.id)
-        settings_form = SettingsForm(request.POST, instance=inst)
+        settings_form = SettingsForm(request.POST, request.FILES, instance=request.user)
         if settings_form.is_valid():
-            user = settings_form.save(user_id=request.user.id)
+            user = settings_form.save()
             if user is not None:
                 return redirect(request.GET.get('continue', '/'))
             else:
                 settings_form.add_error(None, "Sorry wrong login or password")
     return render(request, 'settings.html', context={'form': settings_form})
+
+
+@csrf_protect
+@login_required
+def like(request):
+    id = request.POST.get('question_id')
+    question = get_object_or_404(Question, pk=id)
+    questionLike.objects.toggle_like(user=request.user.profile, question=question)
+    count = question.get_likes()
+    print(count)
+
+    return JsonResponse({'count': count})

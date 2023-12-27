@@ -141,9 +141,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-#
-# class LoginFormRenderer(TemplatesSetting):
-#     form_template_name = "components/form-login.html"
-#
-#
-# FORM_RENDERER = "askme.settings.LoginFormRenderer"
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = 'index'
+
+MEDIA_ROOT = BASE_DIR / 'uploads'
+MEDIA_URL = '/uploads/'

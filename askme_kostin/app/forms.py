@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from .models import Profile, Answer, Question
+from .models import Profile, Answer, Question, Tag
 import datetime
 
 
@@ -19,10 +19,15 @@ class LoginForm(forms.Form):
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password']
 
-    password = forms.CharField(min_length=4, widget=forms.PasswordInput)
-    password_check = forms.CharField(min_length=4, widget=forms.PasswordInput)
+    email = forms.EmailField(error_messages={"required": ""})
+    first_name = forms.CharField(error_messages={"required": ""})
+    last_name = forms.CharField(error_messages={"required": ""})
+
+    password = forms.CharField(min_length=4, widget=forms.PasswordInput, error_messages={"required": ""})
+    password_check = forms.CharField(min_length=4, widget=forms.PasswordInput, error_messages={"required": ""})
+
     # image = forms.ImageField()
 
     def clean(self):
@@ -42,25 +47,29 @@ class RegisterForm(forms.ModelForm):
 class SettingsForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email']
 
-    password = forms.CharField(min_length=4, widget=forms.PasswordInput)
-    password_check = forms.CharField(min_length=4, widget=forms.PasswordInput)
+    # password = forms.CharField(min_length=4, widget=forms.PasswordInput)
+    # password_check = forms.CharField(min_length=4, widget=forms.PasswordInput)
+    avatar = forms.ImageField(required=False)
 
-    def clean(self):
-        password = self.cleaned_data['password']
-        password_check = self.cleaned_data['password_check']
+    # def clean(self):
+    #     password = self.cleaned_data['password']
+    #     password_check = self.cleaned_data['password_check']
+    #
+    #     if password != password_check:
+    #         raise ValidationError("Passwords don't match")
 
-        if password != password_check:
-            raise ValidationError("Passwords don't match")
+    def save(self, **kwargs):
+        user = super().save(**kwargs)
 
-    def save(self, user_id):
-        print(user_id)
-        return
-        # self.cleaned_data.pop('password_check')
-        # user = User.objects.create_user(**self.cleaned_data)
-        # Profile.objects.create(user=user, rating=0)
-        # return user
+        profile = user.profile
+        recieved_avatar = self.cleaned_data.get('avatar')
+        if recieved_avatar:
+            profile.avatar = recieved_avatar
+            profile.save()
+
+        return user
 
 
 class QuestionForm(forms.ModelForm):
@@ -71,10 +80,20 @@ class QuestionForm(forms.ModelForm):
     content = forms.CharField(max_length=2048, widget=forms.Textarea)
     tags = forms.CharField(max_length=256)
 
-    def save(self, user_id):
-        profile = Profile.objects.get(user_id=user_id)
-        return Question.objects.create(title=self.cleaned_data['title'], content=self.cleaned_data['content'],
-                                       author=profile)
+    def save(self, **kwargs):
+        profile = Profile.objects.get(user_id=kwargs['user_id'])
+        tags = []
+        for item in self.cleaned_data['tags'].split():
+            tag = Tag.objects.get(tag_name=item)
+            if tag:
+                tags.append(tag)
+            else:
+                tags.append(Tag.objects.create(tag_name=item))
+
+        question = Question.objects.create(title=self.cleaned_data['title'], content=self.cleaned_data['content'],
+                                           author=profile)
+        question.tags.set(tags)
+        return question
 
 
 class AnswerForm(forms.ModelForm):
