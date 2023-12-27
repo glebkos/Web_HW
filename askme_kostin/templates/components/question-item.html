@@ -5,7 +5,7 @@
         <div class="col-2">
             <div class="row">
                 <div class="col mb-2">
-                    <a href="" class="d-flex justify-content-center"><img src="{% static 'img/test.png' %}" class="w-50"></a>
+                    <a href="" class="d-flex justify-content-center"><img src="{{ question.author.avatar.url }}" class="w-50"></a>
                 </div>
             </div>
             {% csrf_token %}
