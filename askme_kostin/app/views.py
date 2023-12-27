@@ -10,13 +10,30 @@ from django.http import JsonResponse
 
 
 def index(request):
-    # print(request.user.profile)
+    likes = []
+    dislikes = []
     questions = Question.objects.lastQuestions()
-    return render(request, 'index.html', {'title': 'New questions', 'page': paginate(request, questions)})
+    for question in questions:
+        if questionLike.objects.filter(owner=request.user.profile, question=question).exists():
+            item = questionLike.objects.get(owner=request.user.profile, question=question)
+            if item.value == 1:
+                likes.append(item.question)
+            else:
+                dislikes.append(item.question)
+    return render(request, 'index.html', {'title': 'New questions', 'page': paginate(request, questions),
+                                          'likes': likes, 'dislikes': dislikes})
 
 
 @csrf_protect
 def question(request, question_id):
+    likes = []
+    dislikes = []
+    if questionLike.objects.filter(owner=request.user.profile, question=question_id).exists():
+        item = questionLike.objects.get(owner=request.user.profile, question=question_id)
+        if item.value == 1:
+            likes.append(item.question)
+        else:
+            dislikes.append(item.question)
     if request.method == "GET":
         answer_form = AnswerForm()
     if request.method == "POST":
@@ -28,7 +45,7 @@ def question(request, question_id):
     return_question = Question.objects.takeQuestion(question_id)
     answers = Answer.objects.takeAnswers(question_id)
     return render(request, 'question.html', context={'question': return_question, 'page': paginate(request, answers),
-                                                     'form': answer_form})
+                                                     'form': answer_form, 'likes': likes, 'dislikes': dislikes})
 
 
 @login_required(login_url='/login/', redirect_field_name='continue')
@@ -127,8 +144,33 @@ def settings(request):
 def like(request):
     id = request.POST.get('question_id')
     question = get_object_or_404(Question, pk=id)
-    questionLike.objects.toggle_like(user=request.user.profile, question=question)
+    activation = questionLike.objects.toggle_like(user=request.user.profile, question=question)
     count = question.get_likes()
-    print(count)
 
-    return JsonResponse({'count': count})
+    return JsonResponse({'count': count, 'activate': activation})
+
+
+@csrf_protect
+@login_required
+def dislike(request):
+    id = request.POST.get('question_id')
+    question = get_object_or_404(Question, pk=id)
+    activation = questionLike.objects.distoggle_like(user=request.user.profile, question=question)
+    count = question.rating
+
+    return JsonResponse({'count': count, 'activate': activation})
+
+
+@csrf_protect
+@login_required
+def correct(request):
+    id = request.POST.get('answer_id')
+    answer = get_object_or_404(Answer, pk=id)
+    question_id = request.POST.get('question_id')
+    question = get_object_or_404(Question, pk=question_id)
+    if answer.author == question.author:
+        Answer.objects.addCorrect(answer.id)
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+

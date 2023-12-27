@@ -35,14 +35,49 @@ class QuestionLikeManager(models.Manager):
             question.rating += 1
             question.save()
         else:
-            self.filter(owner=user, question=question).delete()
+            like = self.get(owner=user, question=question)
+            if like.value == 1:
+                self.filter(owner=user, question=question).delete()
+                question.rating -= 1
+                question.save()
+                return False
+            elif like.value == -1:
+                self.filter(owner=user, question=question).update(value=1)
+                question.rating += 2
+                question.save()
+        return True
+
+    def distoggle_like(self, user, question):
+        if not self.filter(owner=user, question=question).exists():
+            self.create(owner=user, question=question, value=-1)
             question.rating -= 1
             question.save()
+        else:
+            like = self.get(owner=user, question=question)
+            if like.value == -1:
+                self.filter(owner=user, question=question).delete()
+                question.rating += 1
+                question.save()
+                return False
+            elif like.value == 1:
+                self.filter(owner=user, question=question).update(value=-1)
+                question.rating -= 2
+                question.save()
+        return True
 
 
 class AnswersManager(models.Manager):
     def takeAnswers(self, question_id):
         return self.filter(question__id=question_id)
+
+    def addCorrect(self, answer_id):
+        answer = Answer.objects.get(pk=answer_id)
+        if answer.correct:
+            answer.correct = False
+        else:
+            answer.correct = True
+        print(answer.correct)
+        answer.save()
 
 
 class Profile(models.Model):
@@ -97,7 +132,7 @@ class Answer(models.Model):
 class questionLike(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    value = models.BooleanField()
+    value = models.IntegerField()
 
     objects = QuestionLikeManager()
 
@@ -105,11 +140,11 @@ class questionLike(models.Model):
 class answerLike(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    value = models.BooleanField()
+    value = models.IntegerField()
 
 
 class profileLike(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profileOwner')
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    value = models.BooleanField()
+    value = models.IntegerField()
 

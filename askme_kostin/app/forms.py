@@ -78,15 +78,14 @@ class QuestionForm(forms.ModelForm):
         fields = ['title', 'content']
 
     content = forms.CharField(max_length=2048, widget=forms.Textarea)
-    tags = forms.CharField(max_length=256)
+    tags = forms.CharField(max_length=256, required=False)
 
     def save(self, **kwargs):
         profile = Profile.objects.get(user_id=kwargs['user_id'])
         tags = []
         for item in self.cleaned_data['tags'].split():
-            tag = Tag.objects.get(tag_name=item)
-            if tag:
-                tags.append(tag)
+            if Tag.objects.filter(tag_name=item).exists():
+                tags.append(Tag.objects.get(tag_name=item))
             else:
                 tags.append(Tag.objects.create(tag_name=item))
 

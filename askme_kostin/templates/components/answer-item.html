@@ -29,13 +29,18 @@
                 </div>
                 <div class="col-9 mb-2">
                     <p class=" fs-6 my-2"> {{ answer.content }} </p>
-                    <div class="form-check">
-                        {% if answer.correct %}
-                            <input type="checkbox" class="form-check-input" id="check1" checked>
-                        {% else %}
-                            <input type="checkbox" class="form-check-input" id="check1">
-                        {% endif %}
-                        <label for="check1" class="form-check-label">Correct</label>
-                    </div>
+                    <fieldset
+                        {% if question.author != request.user.profile %}
+                            disabled
+                        {% endif %}>
+
+                        <div class="correct-section form-check">
+                                <input data-qid="{{ question.id }}" data-aid="{{ answer.id }}" type="checkbox" class="form-check-input" id="check1"
+                               {% if answer.correct %}
+                                       checked
+                                {% endif %}>
+                            <label for="check1" class="form-check-label">Correct</label>
+                        </div>
+                    </fieldset>
                 </div>
             </div>

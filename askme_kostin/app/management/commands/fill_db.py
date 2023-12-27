@@ -78,7 +78,7 @@ class Command(BaseCommand):
             questionLike(
                 question=questions[fake.random_int(min=0, max=questions_count - 1)],
                 owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                value=fake.pybool()
+                value=fake.random_int(min=-1, max=1)
             ) for _ in range(0, ratio)
         ]
         questionLike.objects.bulk_create(question_likes * 100)
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             answerLike(
                 answer=answers[fake.random_int(min=0, max=answers_count - 1)],
                 owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                value=fake.pybool()
+                value=fake.random_int(min=-1, max=1)
             ) for _ in range(ratio)
         ]
         answerLike.objects.bulk_create(answers_likes * 100)
