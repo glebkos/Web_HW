@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import auth
 from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm, RegisterForm, SettingsForm, QuestionForm, AnswerForm
-from .models import Question, Answer, questionLike
+from .models import Question, Answer, questionLike, answerLike
 from .services import paginate
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
@@ -14,12 +14,13 @@ def index(request):
     dislikes = []
     questions = Question.objects.lastQuestions()
     for question in questions:
-        if questionLike.objects.filter(owner=request.user.profile, question=question).exists():
-            item = questionLike.objects.get(owner=request.user.profile, question=question)
-            if item.value == 1:
-                likes.append(item.question)
-            else:
-                dislikes.append(item.question)
+        if request.user.is_authenticated:
+            if questionLike.objects.filter(owner=request.user.profile, question=question).exists():
+                item = questionLike.objects.get(owner=request.user.profile, question=question)
+                if item.value == 1:
+                    likes.append(item.question)
+                else:
+                    dislikes.append(item.question)
     return render(request, 'index.html', {'title': 'New questions', 'page': paginate(request, questions),
                                           'likes': likes, 'dislikes': dislikes})
 
@@ -28,12 +29,22 @@ def index(request):
 def question(request, question_id):
     likes = []
     dislikes = []
-    if questionLike.objects.filter(owner=request.user.profile, question=question_id).exists():
-        item = questionLike.objects.get(owner=request.user.profile, question=question_id)
-        if item.value == 1:
-            likes.append(item.question)
-        else:
-            dislikes.append(item.question)
+    answers = Answer.objects.lastAnswers()
+    if request.user.is_authenticated:
+        if questionLike.objects.filter(owner=request.user.profile, question=question_id).exists():
+            item = questionLike.objects.get(owner=request.user.profile, question=question_id)
+            if item.value == 1:
+                likes.append(item.question)
+            else:
+                dislikes.append(item.question)
+        for answer in answers:
+            if answerLike.objects.filter(owner=request.user.profile, answer=answer).exists():
+                item = answerLike.objects.get(owner=request.user.profile, answer=answer)
+                if item.value == 1:
+                    likes.append(item.answer)
+                else:
+                    dislikes.append(item.answer)
+
     if request.method == "GET":
         answer_form = AnswerForm()
     if request.method == "POST":
@@ -42,6 +53,8 @@ def question(request, question_id):
             answer = answer_form.save(user_id=request.user.id, question_id=question_id)
             if answer is None:
                 answer_form.add_error(None, "Wrong answer form")
+            else:
+                return redirect()
     return_question = Question.objects.takeQuestion(question_id)
     answers = Answer.objects.takeAnswers(question_id)
     return render(request, 'question.html', context={'question': return_question, 'page': paginate(request, answers),
@@ -143,9 +156,15 @@ def settings(request):
 @login_required
 def like(request):
     id = request.POST.get('question_id')
-    question = get_object_or_404(Question, pk=id)
-    activation = questionLike.objects.toggle_like(user=request.user.profile, question=question)
-    count = question.get_likes()
+    if id:
+        question = get_object_or_404(Question, pk=id)
+        activation = questionLike.objects.toggle_like(user=request.user.profile, question=question)
+        count = question.get_likes()
+    else:
+        id = request.POST.get('answer_id')
+        answer = get_object_or_404(Answer, pk=id)
+        activation = answerLike.objects.toggle_like(user=request.user.profile, answer=answer)
+        count = answer.get_likes()
 
     return JsonResponse({'count': count, 'activate': activation})
 
@@ -154,9 +173,15 @@ def like(request):
 @login_required
 def dislike(request):
     id = request.POST.get('question_id')
-    question = get_object_or_404(Question, pk=id)
-    activation = questionLike.objects.distoggle_like(user=request.user.profile, question=question)
-    count = question.rating
+    if id:
+        question = get_object_or_404(Question, pk=id)
+        activation = questionLike.objects.distoggle_like(user=request.user.profile, question=question)
+        count = question.rating
+    else:
+        id = request.POST.get('answer_id')
+        answer = get_object_or_404(Answer, pk=id)
+        activation = answerLike.objects.distoggle_like(user=request.user.profile, answer=answer)
+        count = answer.get_likes()
 
     return JsonResponse({'count': count, 'activate': activation})
 
@@ -168,7 +193,7 @@ def correct(request):
     answer = get_object_or_404(Answer, pk=id)
     question_id = request.POST.get('question_id')
     question = get_object_or_404(Question, pk=question_id)
-    if answer.author == question.author:
+    if request.user.author == question.author:
         Answer.objects.addCorrect(answer.id)
         return JsonResponse({'success': True})
     else:

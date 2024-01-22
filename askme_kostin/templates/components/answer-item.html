@@ -1,46 +1,53 @@
 {% load static %}
 
-<div class="row my-2">
-                <div class="col-2 my-2">
-                    <div class="row mb-1">
-                        <div class="col d-flex justify-content-center">
-                            <a href="" class="d-flex justify-content-center"><img src="{{ answer.author.avatar.url }}" class="w-50"></a>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-center">
-                        <div class="col-2 p-0 d-flex justify-content-end">
-                            <a href="" class="link-success">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up " viewBox="0 0 16 16">
-                                  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-                                </svg>
-                            </a>
-                        </div>
-                        <div class="col-4 text-center p-0">
-                            <p>{{answer.rating}}</p>
-                        </div>
-                        <div class="col-2 p-0 d-flex justify-content-start">
-                            <a href="" class="link-danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-9 mb-2">
-                    <p class=" fs-6 my-2"> {{ answer.content }} </p>
-                    <fieldset
-                        {% if question.author != request.user.profile %}
-                            disabled
-                        {% endif %}>
-
-                        <div class="correct-section form-check">
-                                <input data-qid="{{ question.id }}" data-aid="{{ answer.id }}" type="checkbox" class="form-check-input" id="check1"
-                               {% if answer.correct %}
-                                       checked
-                                {% endif %}>
-                            <label for="check1" class="form-check-label">Correct</label>
-                        </div>
-                    </fieldset>
+    <div class="row my-2">
+        <div class="col-2 my-2">
+            <div class="row mb-1">
+                <div class="col d-flex justify-content-center">
+                    <a href="" class="d-flex justify-content-center"><img src="{{ answer.author.avatar.url }}" class="w-50"></a>
                 </div>
             </div>
+            {% csrf_token %}
+            <div class="answer-like-section row d-flex justify-content-center">
+                <button data-id="{{ answer.id }}" class="
+                {% if answer in likes %}
+                    btn-success
+                {% else %}
+                    btn-outline-success
+                {% endif %}
+                btn col-3 p-0 mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up " viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                    </svg>
+                </button>
+                <span class="col-4 text-center p-0">{{ answer.rating }}</span>
+                <button data-id="{{ answer.id }}" class="
+                {% if answer in dislikes %}
+                    btn-danger
+                {% else %}
+                    btn-outline-danger
+                {% endif %}
+                btn col-3 p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="col-9 mb-2">
+            <p class=" fs-6 my-2"> {{ answer.content }} </p>
+            <fieldset
+                {% if question.author != request.user.profile %}
+                    disabled
+                {% endif %}>
+
+                <div class="correct-section form-check">
+                        <input data-qid="{{ question.id }}" data-aid="{{ answer.id }}" type="checkbox" class="form-check-input" id="check1"
+                       {% if answer.correct %}
+                               checked
+                        {% endif %}>
+                    <label for="check1" class="form-check-label">Correct</label>
+                </div>
+            </fieldset>
+        </div>
+    </div>

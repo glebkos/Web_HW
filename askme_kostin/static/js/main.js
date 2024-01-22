@@ -77,6 +77,70 @@ for (let item of items) {
     })
 }
 
+const answer_items = document.getElementsByClassName('answer-like-section');
+
+for (let item of answer_items) {
+    const [like, counter, dislike] = item.children
+    console.log(item.children)
+    like.addEventListener('click', () => {
+        const formData = new FormData();
+
+        formData.append('answer_id', like.dataset.id)
+
+        const request = new Request('/like/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        fetch(request)
+            .then((response) => response.json())
+            .then((data) => {
+                counter.innerHTML = data.count;
+                if (data.activate) {
+                    like.classList.remove("btn-outline-success");
+                    dislike.classList.remove("btn-danger");
+                    dislike.classList.add("btn-outline-danger");
+                    like.classList.add("btn-success");
+                } else {
+                    like.classList.remove("btn-success");
+                    like.classList.add("btn-outline-success");
+                }
+            });
+    })
+
+    dislike.addEventListener('click', () => {
+        const formData = new FormData();
+
+        formData.append('answer_id', dislike.dataset.id)
+
+        const request = new Request('/dislike/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        fetch(request)
+            .then((response) => response.json())
+            .then((data) => {
+                counter.innerHTML = data.count;
+                if (data.activate) {
+                    dislike.classList.remove("btn-outline-danger");
+                    like.classList.remove("btn-success");
+                    like.classList.add("btn-outline-success");
+                    dislike.classList.add("btn-danger");
+                } else {
+                    dislike.classList.remove("btn-danger");
+                    dislike.classList.add("btn-outline-danger");
+                }
+            });
+    })
+}
+
 const correctAnswers = document.getElementsByClassName('correct-section');
 
 for (let item of correctAnswers) {

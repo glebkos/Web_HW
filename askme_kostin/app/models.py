@@ -66,6 +66,44 @@ class QuestionLikeManager(models.Manager):
         return True
 
 
+class AnswerLikeManager(models.Manager):
+    def toggle_like(self, user, answer):
+        if not self.filter(owner=user, answer=answer).exists():
+            self.create(owner=user, answer=answer, value=1)
+            answer.rating += 1
+            answer.save()
+        else:
+            like = self.get(owner=user, answer=answer)
+            if like.value == 1:
+                self.filter(owner=user, answer=answer).delete()
+                answer.rating -= 1
+                answer.save()
+                return False
+            elif like.value == -1:
+                self.filter(owner=user, answer=answer).update(value=1)
+                answer.rating += 2
+                answer.save()
+        return True
+
+    def distoggle_like(self, user, answer):
+        if not self.filter(owner=user, answer=answer).exists():
+            self.create(owner=user, answer=answer, value=-1)
+            answer.rating -= 1
+            answer.save()
+        else:
+            like = self.get(owner=user, answer=answer)
+            if like.value == -1:
+                self.filter(owner=user, answer=answer).delete()
+                answer.rating += 1
+                answer.save()
+                return False
+            elif like.value == 1:
+                self.filter(owner=user, answer=answer).update(value=-1)
+                answer.rating -= 2
+                answer.save()
+        return True
+
+
 class AnswersManager(models.Manager):
     def takeAnswers(self, question_id):
         return self.filter(question__id=question_id)
@@ -78,6 +116,9 @@ class AnswersManager(models.Manager):
             answer.correct = True
         print(answer.correct)
         answer.save()
+
+    def lastAnswers(self):
+        return self.order_by("-creation_date")
 
 
 class Profile(models.Model):
@@ -128,23 +169,35 @@ class Answer(models.Model):
     def __str__(self):
         return self.content
 
+    def get_likes(self):
+        return self.rating
+
 
 class questionLike(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     value = models.IntegerField()
 
-    objects = QuestionLikeManager()
+    class Meta:
+        unique_together = [["question", "owner"]]
 
+    objects = QuestionLikeManager()
 
 class answerLike(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     value = models.IntegerField()
 
+    class Meta:
+        unique_together = [["answer", "owner"]]
+
+    objects = AnswerLikeManager()
 
 class profileLike(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profileOwner')
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     value = models.IntegerField()
+
+    class Meta:
+        unique_together = [["profile", "owner"]]
 
