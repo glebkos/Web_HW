@@ -106,7 +106,7 @@ class AnswerLikeManager(models.Manager):
 
 class AnswersManager(models.Manager):
     def takeAnswers(self, question_id):
-        return self.filter(question__id=question_id)
+        return self.filter(question__id=question_id).order_by("-correct", "-rating")
 
     def addCorrect(self, answer_id):
         answer = Answer.objects.get(pk=answer_id)

@@ -160,5 +160,10 @@ for (let item of correctAnswers) {
         });
         fetch(request)
             .then((response) => response.json())
+            .then((data) => {
+                if(data.success == false){
+                    correct.checked = false
+                }
+            });
     })
 }

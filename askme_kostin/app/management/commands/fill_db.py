@@ -74,20 +74,26 @@ class Command(BaseCommand):
         answers = Answer.objects.all()
         answers_count = answers.count()
 
-        question_likes = [
-            questionLike(
-                question=questions[fake.random_int(min=0, max=questions_count - 1)],
-                owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                value=fake.random_int(min=-1, max=1)
-            ) for _ in range(0, ratio)
-        ]
-        questionLike.objects.bulk_create(question_likes * 100)
+        question_likes = []
+        for i in range(profiles_count):
+            for j in range(0, questions_count, 10):
+                question_likes.append(
+                    questionLike(
+                        question=questions[j + fake.random_int(min=0, max=9)],
+                        owner=profiles[i],
+                        value=1 - 2 * fake.random_int(min=0, max=1)
+                    )
+                )
+        questionLike.objects.bulk_create(question_likes)
 
-        answers_likes = [
-            answerLike(
-                answer=answers[fake.random_int(min=0, max=answers_count - 1)],
-                owner=profiles[fake.random_int(min=0, max=profiles_count - 1)],
-                value=fake.random_int(min=-1, max=1)
-            ) for _ in range(ratio)
-        ]
-        answerLike.objects.bulk_create(answers_likes * 100)
+        answers_likes = []
+        for i in range(profiles_count):
+            for j in range(0, answers_count, 100):
+                answers_likes.append(
+                    answerLike(
+                        answer=answers[j + fake.random_int(min=0, max=9)],
+                        owner=profiles[i],
+                        value=1 - 2 * fake.random_int(min=0, max=1)
+                    )
+                )
+        answerLike.objects.bulk_create(answers_likes)
